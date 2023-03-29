@@ -57,9 +57,12 @@ async function adminUser(user) {
       if (snapshot.exists()) {
         const admins = snapshot.val();
         console.log(admins);
+        // isAdmin이 admin일려면, 우리가 받아온 admins라는 배열안에 user.uid가 있는지 확인해주고
         const isAdmin = admins.includes(user.uid);
+        // 사용자에있는 모든 정보를 낱개로 풀어서, isAdmin이란 정보도 전달해줄 것입니다.
         return { ...user, isAdmin };
       }
+      // admin이라는 데이터가 존재하지 않는경우, 네트워크 통신을 못한 경우는 user 정보 return(admin이라는 데이터가 없기 때문에 isAdmin이 False가 될 것이다.)
       return user;
     });
 }

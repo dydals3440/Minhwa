@@ -1,4 +1,5 @@
 import { initializeApp } from 'firebase/app';
+import { v4 as uuid } from 'uuid';
 import {
   getAuth,
   signInWithPopup,
@@ -6,7 +7,7 @@ import {
   signOut,
   onAuthStateChanged,
 } from 'firebase/auth';
-import { getDatabase, ref, child, get } from 'firebase/database';
+import { getDatabase, ref, set, get } from 'firebase/database';
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -66,3 +67,25 @@ async function adminUser(user) {
       return user;
     });
 }
+
+// 새로운 제품 등록
+export async function addNewProduct(product, imageUrl) {
+  const id = uuid();
+  // 제품마다 고유한 id 추가 (uuid 라이브러리 활용)
+  // firebase에서 data를 읽을떄는 get, 쓸떄는 set을 활용합니다.
+  set(ref(database, `products/${id}`), {
+    ...product,
+    id,
+    price: parseInt(product.price),
+    image: imageUrl,
+    options: product.options.split(','),
+  });
+}
+// ref는 기존의 database를 사용!, `products`에 추가 /id라는 키에다가 우리의 제품 정보를 저장!
+// 고유한 아이디를 받아와서 고유한 아이디 안에다가 제품의 정보를 등록!
+// 기존의 받아온 product의 모든 key와 value를 받아오고, 고유한 id에 제품의 정보를 등록! 그릐고 product안에도 id라는 정보가 들어갈 수 있도록 만듬!
+// 제품의 price는 문자열 형태로 받았기 때문에 number타입으로 저장해주기 위해 parseInt활용!
+// 그 후 image라는 키에 전달받은 imageUrl을 전달해줄꺼임 인자를 image로 바꾸고 image: image이므로 image라고만 저겅줘도됨.
+// option들 또한 쉼표 형태로 구분받기 때문에 split활용
+
+// firebase는 소켓 통신이므로 네트워크 통신에서 확인할 수 없음, 직접 firebase Realtime Database에 들어가서 확인해보아야 합니다.

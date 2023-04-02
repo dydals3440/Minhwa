@@ -73,7 +73,8 @@ export async function addNewProduct(product, imageUrl) {
   const id = uuid();
   // 제품마다 고유한 id 추가 (uuid 라이브러리 활용)
   // firebase에서 data를 읽을떄는 get, 쓸떄는 set을 활용합니다.
-  set(ref(database, `products/${id}`), {
+  // 다 되면 결과를 알 수 있게 return 사용 비동기라 가능!
+  return set(ref(database, `products/${id}`), {
     ...product,
     id,
     price: parseInt(product.price),

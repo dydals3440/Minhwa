@@ -18,6 +18,9 @@ export default function NewProduct() {
     // 우리가 e.target에서 제일 궁금한건, 이름, values(경로)), 파일이 선택이 되었다면 files가 할당이 되므로 이것을 받아옴
     const { name, value, files } = e.target;
     // 입력 폼에서 발생한 모든 handleChange는 이름이 파일인 경우에만, 파일을 set해주고, 나머지의 경우에는 기존의 product오브젝트에 업데이트 하는 부분만 덮어씌워줌
+
+    // input의 이름이 file인 경우에는 setProduct를 해줄 것이 아닌
+    // setFiles를 해줄 거고, 이미지를 하나만 선택하기때문에, files에 있는 첫번쨰 파일만 set해주도록 함, 바로 return하여, setProduct이 발생되지 않게 만듬
     if (name === 'file') {
       setFile(files && files[0]);
       console.log(files[0]);
@@ -104,7 +107,7 @@ export default function NewProduct() {
             type='text'
             name='options'
             value={product.options ?? ''}
-            placeholder='옵션들(콤마(,)로 구분'
+            placeholder='옵션들(콤마(,)로 구분해주세요!)'
             required
             onChange={handleChange}
           />

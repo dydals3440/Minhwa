@@ -90,3 +90,14 @@ export async function addNewProduct(product, imageUrl) {
 // option들 또한 쉼표 형태로 구분받기 때문에 split활용
 
 // firebase는 소켓 통신이므로 네트워크 통신에서 확인할 수 없음, 직접 firebase Realtime Database에 들어가서 확인해보아야 합니다.
+
+// 14-19강
+export async function getProducts() {
+  return get(ref(database, 'products')).then((snapshot) => {
+    if (snapshot.exists()) {
+      // JS에서 제공해주는 Object.values를 이용해서 value들만 갖고옴
+      return Object.values(snapshot.val());
+    } 
+    return []; // snapshot이 없으면 텅텅빈 배열
+  });
+}

@@ -7,7 +7,7 @@ import {
   signOut,
   onAuthStateChanged,
 } from 'firebase/auth';
-import { getDatabase, ref, set, get } from 'firebase/database';
+import { getDatabase, ref, set, get, remove } from 'firebase/database';
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -97,7 +97,27 @@ export async function getProducts() {
     if (snapshot.exists()) {
       // JS에서 제공해주는 Object.values를 이용해서 value들만 갖고옴
       return Object.values(snapshot.val());
-    } 
+    }
     return []; // snapshot이 없으면 텅텅빈 배열
   });
+}
+
+// Shopping Cart
+export async function getCart(userId) {
+  return get(ref(database, `carts/${userId}`)) //
+    .then((snapshot) => {
+      const items = snapshot.val() || {};
+      console.log(items);
+      return Object.values(items);
+    });
+}
+
+// firebase에서 추가 업데이트는 set으로 같이 작동!
+export async function addOrUpdateToCart(userId, product) {
+  // 해당하는 위치에 product을 추가
+  return set(ref(database, `carts/${userId}/${product.id}`), product);
+}
+
+export async function removeFromCart(userId, productId) {
+  return remove(ref(database, `carts/${userId}/${productId}}}`));
 }

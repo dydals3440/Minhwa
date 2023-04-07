@@ -1,7 +1,7 @@
 import { Outlet } from 'react-router-dom';
-import { AuthContextProvider } from './components/context/AuthContext';
 import Navbar from './components/Navbar';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { AuthContextProvider } from './context/AuthContext';
 
 const queryClient = new QueryClient();
 

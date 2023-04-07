@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { addNewProduct } from '../api/firebase';
 import { uploadImage } from '../api/uploader';
 import Button from '../components/ui/Button';
+import { useMutation, useQueryClient } from 'react-query';
 
 // cloundinary Uploading assets, firebase write documentation watch
 
@@ -12,6 +13,15 @@ export default function NewProduct() {
   // 14.17 업로드 중인지, 아닌지 판단하는 상태(처음은 업로딩 중이 아니니 false)
   const [isUploading, setIsUploading] = useState(false);
   const [success, setSuccess] = useState();
+  // 14.28 Mutation을 통해 제품이 바로바로 등록되게 구현
+  const queryClient = useQueryClient();
+  const addProduct = useMutation(
+    ({ product, url }) => addNewProduct(product, url),
+    {
+      //Mutation(수정)이 성공적으로 되면은 invalidateQueries 즉, products를 즉각적으로 업데이트 시킴!
+      onSuccess: () => queryClient.invalidateQueries(['products']),
+    }
+  );
 
   const handleChange = (e) => {
     console.log(e.target);
@@ -32,21 +42,25 @@ export default function NewProduct() {
     e.preventDefault();
     // uploading이 되면 Uploading은 True인 상태다
     setIsUploading(true);
-
     // 제품의 사진을 Cloudinary에 업로드 하고, URL을 획득합니다.
     uploadImage(file) //
       .then((url) => {
-        // Firebase에 새로운 제품을 추가합니다. upload후 상태는 다시 false로 초기화!
-        addNewProduct(product, url)
-          .then(() => {
-            setSuccess('성공적으로 제품이 추가되었습니다');
-            // 계속 화면에 저게 표기되면 안되므로, setTimeOut을 통해 4초정도 후에 다시 null로 변경
-            setTimeout(() => {
-              setSuccess(null);
-            }, 4000);
-          })
-          .finally(() => setIsUploading(false));
-      });
+        // 바로 제품 추가 반영 구현!
+        addProduct.mutate(
+          { product, url },
+          {
+            onSuccess: () => {
+              // Firebase에 새로운 제품을 추가합니다. upload후 상태는 다시 false로 초기화!
+              setSuccess('성공적으로 제품이 추가되었습니다');
+              // 계속 화면에 저게 표기되면 안되므로, setTimeOut을 통해 4초정도 후에 다시 null로 변경
+              setTimeout(() => {
+                setSuccess(null);
+              }, 4000);
+            },
+          }
+        );
+      })
+      .finally(() => setIsUploading(false));
   };
   return (
     <div>

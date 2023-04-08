@@ -1,7 +1,7 @@
 import React from 'react';
 import { AiOutlineMinusSquare, AiOutlinePlusSquare } from 'react-icons/ai';
 import { RiDeleteBin5Fill } from 'react-icons/ri';
-import { addOrUpdateToCart, removeFromCart } from '../api/firebase';
+import useCart from '../hooks/useCart';
 
 // 공통적인 CSS는 상수변수로 처리가능
 const ICON_CLASS =
@@ -12,14 +12,15 @@ export default function CartItem({
   product: { id, image, title, option, quantity, price },
   uid,
 }) {
+  const { addOrUpdateItem, removeItem } = useCart();
   const handleMinus = () => {
     // 제품의 개수가 하나밖에 없을떄는 더이상 마이너스가 안되므로
     if (quantity < 2) return;
-    addOrUpdateToCart(uid, { ...product, quantity: quantity - 1 });
+    addOrUpdateItem.mutate({ ...product, quantity: quantity - 1 });
   };
   const handlePlus = () =>
-    addOrUpdateToCart(uid, { ...product, quantity: quantity + 1 });
-  const handleDelete = () => removeFromCart(uid, id);
+    addOrUpdateItem.mutate({ ...product, quantity: quantity + 1 });
+  const handleDelete = () => removeItem.mutate(id);
   return (
     <li className='flex justify-between my-2 items-center'>
       <img className='w-24 md:w-48 rounded-lg' src={image} alt={title} />

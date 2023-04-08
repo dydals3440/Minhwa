@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { addNewProduct } from '../api/firebase';
 import { uploadImage } from '../api/uploader';
 import Button from '../components/ui/Button';
-import { useMutation, useQueryClient } from 'react-query';
+import useProducts from '../hooks/useProducts';
 
 // cloundinary Uploading assets, firebase write documentation watch
 
@@ -13,15 +12,8 @@ export default function NewProduct() {
   // 14.17 업로드 중인지, 아닌지 판단하는 상태(처음은 업로딩 중이 아니니 false)
   const [isUploading, setIsUploading] = useState(false);
   const [success, setSuccess] = useState();
-  // 14.28 Mutation을 통해 제품이 바로바로 등록되게 구현
-  const queryClient = useQueryClient();
-  const addProduct = useMutation(
-    ({ product, url }) => addNewProduct(product, url),
-    {
-      //Mutation(수정)이 성공적으로 되면은 invalidateQueries 즉, products를 즉각적으로 업데이트 시킴!
-      onSuccess: () => queryClient.invalidateQueries(['products']),
-    }
-  );
+  // 14.28 Mutation을 통해 제품이 바로바로 등록되게 구현(hook으로 리팩토링함)
+  const { addProduct } = useProducts();
 
   const handleChange = (e) => {
     console.log(e.target);

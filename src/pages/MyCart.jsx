@@ -27,7 +27,7 @@ export default function MyCart() {
         내 장바구니
       </p>
       {!hasProducts && (
-        <p className='text-2xl text-center my-10 font-bold border border-red-300 p-10 border-dotted border-4'>
+        <p className='text-2xl text-center my-10 font-bold border-red-300 p-10 border-dotted border-4'>
           장바구니에 상품이 없습니다. 상품을 추가해주세요
         </p>
       )}

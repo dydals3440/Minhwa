@@ -5,7 +5,7 @@ import useCart from '../hooks/useCart';
 export default function CartStatus() {
   const {
     cartQuery: { data: products },
-  } = useCart();
+  } = useCart ();
   return (
     <div className='relative'>
       <AiOutlineShoppingCart className='text-4xl' />
